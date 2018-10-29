@@ -48,7 +48,7 @@ class AlexaController extends Controller
                 'date' => '2020-03-03',
                 'state' => 'Alabama',
                 'type' => 'primary',
-                'party' => 'democratic',
+                'party' => 'all',
             ],
             [
                 'date' => '2020-03-03',
