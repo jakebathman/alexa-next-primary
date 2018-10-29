@@ -289,7 +289,25 @@ class AlexaController extends Controller
             }
         }
 
-        $daysUntil = $today->diffForHumans(Carbon::parse($nextDate), 1);
+        $carbonNextDate = Carbon::parse($nextDate);
+        $daysUntil = $today->diffInDays($carbonNextDate);
+
+        if ($daysUntil > 120) {
+            $countdown = $today->diffForHumans($carbonNextDate, 1, false, 4);
+            $dateString = $carbonNextDate->format('F jS, Y');
+        } elseif ($daysUntil > 45) {
+            $countdown = $today->diffForHumans($carbonNextDate, 1, false, 2);
+            $dateString = $carbonNextDate->format('l, F jS');
+        } elseif ($daysUntil <= 2) {
+            $countdown = $today->diffForHumans($carbonNextDate, 1);
+            $dateString = $carbonNextDate->format('F jS');
+        } elseif ($daysUntil <= 10) {
+            $countdown = $today->diffInDays($carbonNextDate) . ' ' . str_plural('day', $today->diffInDays($carbonNextDate));
+            $dateString = $carbonNextDate->format('F jS');
+        } else {
+            $countdown = $today->diffForHumans($carbonNextDate, 1);
+            $dateString = $carbonNextDate->format('l, F jS');
+        }
 
         $next = collect($this->primaries)
             ->filter(
@@ -299,7 +317,14 @@ class AlexaController extends Controller
             )
             ->groupBy('type');
 
-        $output = "In " . $daysUntil . ", ";
+        if ($carbonNextDate->isToday()) {
+            $output = "Today, {$dateString}, ";
+        } elseif ($carbonNextDate->isTomorrow()) {
+            $output = "Tomorrow, {$dateString}, ";
+        } else {
+            $output = "On {$dateString}, about {$countdown} from now, ";
+        }
+
         $hasCaucuses = false;
 
         if ($next->get('caucus', false)) {
@@ -310,10 +335,12 @@ class AlexaController extends Controller
 
             $output .= "caucuses will be held ";
             $groups = [];
+            $hasParties = false;
 
             // Dem
             if ($grouped->get('democratic', false)) {
-                $groups[] = " for the Democrats in " . $this->arrayImplodeNice(
+                $hasParties = true;
+                $groups[] = "for the Democrats in " . $this->arrayImplodeNice(
                     $grouped->get('democratic')
                     ->toArray()
                 );
@@ -321,7 +348,8 @@ class AlexaController extends Controller
 
             // GOP
             if ($grouped->get('republican', false)) {
-                $groups[] = " for the Republicans in " . $this->arrayImplodeNice(
+                $hasParties = true;
+                $groups[] = "for the Republicans in " . $this->arrayImplodeNice(
                     $grouped->get('republican')
                     ->toArray()
                 );
@@ -329,7 +357,7 @@ class AlexaController extends Controller
 
             // All parties
             if ($grouped->get('all', false)) {
-                $groups[] = " in " . $this->arrayImplodeNice(
+                $groups[] = ($hasParties ? "for all parties " : "") . "in " . $this->arrayImplodeNice(
                     $grouped->get('all')
                     ->toArray()
                 );
@@ -352,7 +380,6 @@ class AlexaController extends Controller
 
             $groups = [];
 
-
             // Dem
             if ($grouped->get('democratic', false)) {
                 $groups[] = "for the Democrats in " . $this->arrayImplodeNice(
@@ -371,7 +398,7 @@ class AlexaController extends Controller
 
             // All parties
             if ($grouped->get('all', false)) {
-                $groups[] = "for all parties in " . $this->arrayImplodeNice(
+                $groups[] = ($hasParties ? "for all parties " : "") . "in " . $this->arrayImplodeNice(
                     $grouped->get('all')
                     ->toArray()
                 );
