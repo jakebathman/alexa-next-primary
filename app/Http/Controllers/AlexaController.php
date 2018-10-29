@@ -6,6 +6,7 @@ use Error;
 use Exception;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use AppExceptions\EchoValidationException;
 
@@ -19,48 +20,258 @@ class AlexaController extends Controller
     {
         $this->applicationId = env('ALEXA_SKILL_ID');
         $this->primaries = [
-            ['date' => '2020-02-03', 'state' => 'Iowa Caucuses'],
-            ['date' => '2020-02-11', 'state' => 'New Hampshire'],
-            ['date' => '2020-02-15', 'state' => 'Democratic Nevada Caucus'],
-            ['date' => '2020-02-22', 'state' => 'Democratic South Carolina'],
-            ['date' => '2020-03-03', 'state' => 'Alabama'],
-            ['date' => '2020-03-03', 'state' => 'California'],
-            ['date' => '2020-03-03', 'state' => 'Massachusetts'],
-            ['date' => '2020-03-03', 'state' => 'North Carolina'],
-            ['date' => '2020-03-03', 'state' => 'Oklahoma'],
-            ['date' => '2020-03-03', 'state' => 'Tennessee'],
-            ['date' => '2020-03-03', 'state' => 'Texas'],
-            ['date' => '2020-03-03', 'state' => 'Vermont'],
-            ['date' => '2020-03-03', 'state' => 'Virginia'],
-            ['date' => '2020-03-07', 'state' => 'Louisiana'],
-            ['date' => '2020-03-10', 'state' => 'Republican Hawaii Caucus'],
-            ['date' => '2020-03-10', 'state' => 'Idaho'],
-            ['date' => '2020-03-10', 'state' => 'Michigan'],
-            ['date' => '2020-03-10', 'state' => 'Mississippi'],
-            ['date' => '2020-03-10', 'state' => 'Missouri'],
-            ['date' => '2020-03-10', 'state' => 'Ohio'],
-            ['date' => '2020-03-17', 'state' => 'Arizona'],
-            ['date' => '2020-03-17', 'state' => 'Florida'],
-            ['date' => '2020-03-17', 'state' => 'Illinois'],
-            ['date' => '2020-04-07', 'state' => 'Wisconsin'],
-            ['date' => '2020-04-28', 'state' => 'Connecticut'],
-            ['date' => '2020-04-28', 'state' => 'Delaware'],
-            ['date' => '2020-04-28', 'state' => 'Maryland'],
-            ['date' => '2020-04-28', 'state' => 'Pennsylvania'],
-            ['date' => '2020-04-28', 'state' => 'Rhode Island'],
-            ['date' => '2020-05-05', 'state' => 'Indiana'],
-            ['date' => '2020-05-12', 'state' => 'Republican Nebraska'],
-            ['date' => '2020-05-12', 'state' => 'West Virginia'],
-            ['date' => '2020-05-19', 'state' => 'Arkansas'],
-            ['date' => '2020-05-19', 'state' => 'Kentucky'],
-            ['date' => '2020-05-19', 'state' => 'Oregon'],
-            ['date' => '2020-05-26', 'state' => 'Republican Washington Caucus'],
-            ['date' => '2020-06-02', 'state' => 'Montana'],
-            ['date' => '2020-06-02', 'state' => 'New Jersey'],
-            ['date' => '2020-06-02', 'state' => 'New Mexico'],
-            ['date' => '2020-06-02', 'state' => 'South Dakota'],
-            ['date' => '2020-06-07', 'state' => 'Democratic Puerto Rico'],
-            ['date' => '2020-06-06', 'state' => 'Democratic Washington, DC'],
+            [
+                'date' => '2020-02-03',
+                'state' => 'Iowa',
+                'type' => 'caucus',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-02-11',
+                'state' => 'New Hampshire',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-02-15',
+                'state' => 'Nevada',
+                'type' => 'caucus',
+                'party' => 'democratic',
+            ],
+            [
+                'date' => '2020-02-22',
+                'state' => 'South Carolina',
+                'type' => 'primary',
+                'party' => 'democratic',
+            ],
+            [
+                'date' => '2020-03-03',
+                'state' => 'Alabama',
+                'type' => 'primary',
+                'party' => 'democratic',
+            ],
+            [
+                'date' => '2020-03-03',
+                'state' => 'California',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-03',
+                'state' => 'Massachusetts',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-03',
+                'state' => 'North Carolina',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-03',
+                'state' => 'Oklahoma',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-03',
+                'state' => 'Tennessee',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-03',
+                'state' => 'Texas',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-03',
+                'state' => 'Vermont',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-03',
+                'state' => 'Virginia',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-07',
+                'state' => 'Louisiana',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-10',
+                'state' => 'Hawaii',
+                'type' => 'caucus',
+                'party' => 'republican',
+            ],
+            [
+                'date' => '2020-03-10',
+                'state' => 'Idaho',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-10',
+                'state' => 'Michigan',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-10',
+                'state' => 'Mississippi',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-10',
+                'state' => 'Missouri',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-10',
+                'state' => 'Ohio',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-17',
+                'state' => 'Arizona',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-17',
+                'state' => 'Florida',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-03-17',
+                'state' => 'Illinois',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-04-07',
+                'state' => 'Wisconsin',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-04-28',
+                'state' => 'Connecticut',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-04-28',
+                'state' => 'Delaware',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-04-28',
+                'state' => 'Maryland',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-04-28',
+                'state' => 'Pennsylvania',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-04-28',
+                'state' => 'Rhode Island',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-05-05',
+                'state' => 'Indiana',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-05-12',
+                'state' => 'Nebraska',
+                'type' => 'primary',
+                'party' => 'republican',
+            ],
+            [
+                'date' => '2020-05-12',
+                'state' => 'West Virginia',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-05-19',
+                'state' => 'Arkansas',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-05-19',
+                'state' => 'Kentucky',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-05-19',
+                'state' => 'Oregon',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-05-26',
+                'state' => 'Washington',
+                'type' => 'caucus',
+                'party' => 'republican',
+            ],
+            [
+                'date' => '2020-06-02',
+                'state' => 'Montana',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-06-02',
+                'state' => 'New Jersey',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-06-02',
+                'state' => 'New Mexico',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-06-02',
+                'state' => 'South Dakota',
+                'type' => 'primary',
+                'party' => 'all',
+            ],
+            [
+                'date' => '2020-06-07',
+                'state' => 'Puerto Rico',
+                'type' => 'primary',
+                'party' => 'democratic',
+            ],
+            [
+                'date' => '2020-06-06',
+                'state' => 'Washington, DC',
+                'type' => 'primary',
+                'party' => 'democratic',
+            ],
         ];
     }
 
@@ -78,16 +289,98 @@ class AlexaController extends Controller
             }
         }
 
+        $daysUntil = $today->diffForHumans(Carbon::parse($nextDate), 1);
+
         $next = collect($this->primaries)
             ->filter(
                 function ($value, $key) use ($nextDate) {
                     return $value['date'] == $nextDate;
                 }
-            );
+            )
+            ->groupBy('type');
 
-        $daysUntil = $today->diffForHumans(Carbon::parse($nextDate), 1);
+        $output = "In " . $daysUntil . ", ";
+        $hasCaucuses = false;
 
-        return "The next primary is in " . $daysUntil . " and is being held in " . $this->arrayImplodeNice($next->pluck('state')->toArray());
+        if ($next->get('caucus', false)) {
+            // Get party groups first
+            $grouped = $next->get('caucus')->mapToGroups(function ($item) {
+                return [$item['party'] => $item['state']];
+            });
+
+            $output .= "caucuses will be held ";
+            $groups = [];
+
+            // Dem
+            if ($grouped->get('democratic', false)) {
+                $groups[] = " for the Democrats in " . $this->arrayImplodeNice(
+                    $grouped->get('democratic')
+                    ->toArray()
+                );
+            }
+
+            // GOP
+            if ($grouped->get('republican', false)) {
+                $groups[] = " for the Republicans in " . $this->arrayImplodeNice(
+                    $grouped->get('republican')
+                    ->toArray()
+                );
+            }
+
+            // All parties
+            if ($grouped->get('all', false)) {
+                $groups[] = " in " . $this->arrayImplodeNice(
+                    $grouped->get('all')
+                    ->toArray()
+                );
+            }
+
+            $output .= $this->arrayImplodeNice($groups);
+
+            $hasCaucuses = true;
+        }
+        if ($next->get('primary', false)) {
+            if ($hasCaucuses === true) {
+                $output .= ", and ";
+            }
+            $output .= "primaries will be held ";
+
+            // Get party groups first
+            $grouped = $next->get('primary')->mapToGroups(function ($item) {
+                return [$item['party'] => $item['state']];
+            });
+
+            $groups = [];
+
+
+            // Dem
+            if ($grouped->get('democratic', false)) {
+                $groups[] = "for the Democrats in " . $this->arrayImplodeNice(
+                    $grouped->get('democratic')
+                    ->toArray()
+                );
+            }
+
+            // GOP
+            if ($grouped->get('republican', false)) {
+                $groups[] = "for the Republicans in " . $this->arrayImplodeNice(
+                    $grouped->get('republican')
+                    ->toArray()
+                );
+            }
+
+            // All parties
+            if ($grouped->get('all', false)) {
+                $groups[] = "for all parties in " . $this->arrayImplodeNice(
+                    $grouped->get('all')
+                    ->toArray()
+                );
+            }
+
+            $output .= $this->arrayImplodeNice($groups);
+        }
+
+        return $output;
     }
 
     public function getAlexaResponse()
@@ -97,18 +390,20 @@ class AlexaController extends Controller
 
         $headers = request()->header();
 
-        try {
-            // Validate the request
-            $this->validateEchoPayload(request()->getContent(), $headers);
-        } catch (EchoValidationException $e) {
-            return (new Response(null, 400));
-        } catch (Exception $e) {
-            Log::info("1");
-            Log::info(json_encode(['error' => $e->getMessage(), 'line' => $e->getLine()]));
-            return json_encode(['error' => $e->getMessage(), 'line' => $e->getLine()]);
-        } catch (Error $e) {
-            Log::info("2");
-            return json_encode(['error' => $e->getMessage(), 'line' => $e->getLine()]);
+        if (!App::environment('local')) {
+            try {
+                // Validate the request
+                $this->validateEchoPayload(request()->getContent(), $headers);
+            } catch (EchoValidationException $e) {
+                return (new Response(null, 400));
+            } catch (Exception $e) {
+                Log::info("1");
+                Log::info(json_encode(['error' => $e->getMessage(), 'line' => $e->getLine()]));
+                return json_encode(['error' => $e->getMessage(), 'line' => $e->getLine()]);
+            } catch (Error $e) {
+                Log::info("2");
+                return json_encode(['error' => $e->getMessage(), 'line' => $e->getLine()]);
+            }
         }
 
         // Respond to the request
@@ -262,7 +557,8 @@ class AlexaController extends Controller
         if (strpos(
             $parsedCertificate['extensions']['subjectAltName'],
             $echoServiceDomain
-        ) === false) {
+        ) === false
+        ) {
             return ('subjectAltName Check Failed');
         }
         // Check that the signing certificate has not expired
@@ -282,11 +578,11 @@ class AlexaController extends Controller
      * last item in the list, and uses the Oxford Comma in any list 3 or more items
      * long.
      *
-     * @param      array   $array   The array of items to implode (nicely)
-     * @param      string  $ending  The penultimate word, which will come before the
-     *                              last item in the list. Defaults to "and"
+     * @param array  $array  The array of items to implode (nicely)
+     * @param string $ending The penultimate word, which will come before the
+     *                       last item in the list. Defaults to "and"
      *
-     * @return     string  For arrays of:
+     * @return string  For arrays of:
      *                       - 3 or more items, the return is a string list
      *                           e.g.    ['dogs','cats','sheep']
      *                           returns "dogs, cats, and sheep"
@@ -297,7 +593,6 @@ class AlexaController extends Controller
      *                           e.g.    ['dogs']
      *                           returns "dogs"
      *                     For non-array inputs, the original value is returned;
-     *
      */
     public function arrayImplodeNice($array, $ending = 'and')
     {
@@ -314,7 +609,7 @@ class AlexaController extends Controller
         }
 
         if ($countOriginal == 2) {
-            return array_shift($array) . $ending . " " . array_shift($array);
+            return array_shift($array) . " " . $ending . " " . array_shift($array);
         }
 
         for ($i = 0; $i < $countOriginal; $i++) {
