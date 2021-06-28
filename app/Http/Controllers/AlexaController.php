@@ -326,6 +326,7 @@ class AlexaController extends Controller
         }
 
         $hasCaucuses = false;
+        $hasParties = false;
 
         if ($next->get('caucus', false)) {
             // Get party groups first
